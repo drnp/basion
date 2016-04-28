@@ -1,0 +1,13 @@
+{
+    "name": "bsgroup/basion",
+    "description": "Extend PHP frameworks for better develop and delivery experience",
+    "type": "project",
+    "license": "BSD-3",
+    "authors": [
+        {
+            "name": "Dr.NP",
+            "email": "np@bsgroup.org"
+        }
+    ],
+    "require": {}
+}
