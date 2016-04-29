@@ -1,7 +1,7 @@
 {
     "name": "bsgroup/basion",
     "description": "Extend PHP frameworks for better develop and delivery experience",
-    "type": "project",
+    "type": "library",
     "license": "BSD-3",
     "authors": [
         {
@@ -9,5 +9,11 @@
             "email": "np@bsgroup.org"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=5.5.0",
+        "monolog/monolog": "^1.19"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.0"
+    }
 }
