@@ -15,6 +15,7 @@ namespace Basion;
 require 'Interfaces/FrameworkProviderInterface.php';
 require 'FrameworkProviders/ProviderBase.php';
 require 'FrameworkProviders/SilexProvider.php';
+
 require 'Interfaces/MiddleWareInterface.php';
 require 'MiddleWares/ContentType.php';
 require 'MiddleWares/ApiVersion.php';
@@ -56,9 +57,10 @@ class Basion
      * @var array
      */
     private $supported_middlewares = [
-        'ContentType'   => '', 
+        'ApiVersion'    => '',
         'Authorization' => '', 
-        'ApiVersion' => ''
+        'ContentType'   => '', 
+        'DataEnvelope'  => ''
     ];
 
     /**
@@ -158,6 +160,9 @@ class Basion
             $this->_setMiddleWares();
         }
 
+        // HTTP request method
+        $provider['http_request_method'] = \strtolower(\filter_input(\INPUT_SERVER, 'REQUEST_METHOD'));
+
         return $provider;
     }
 
@@ -190,11 +195,28 @@ class Basion
     }
 
     /**
+     * Set / Get provider's input data
+     *
+     * @param mixed     Data
+     *
+     * @return mixed    Current HTTP input data
+     */
+    public function input($data = null)
+    {
+        if ($data)
+        {
+            $this->provider['input_data'] = $data;
+        }
+
+        return $this->provider['input_data'];
+    }
+
+    /**
      * Set provider's structrurized data
      *
      * @param mixed     Data
      */
-    public function data($data)
+    public function output($data = null)
     {
         //$this->provider->setStructurizedData($data);
         $this->provider['structurized_data'] = $data;
