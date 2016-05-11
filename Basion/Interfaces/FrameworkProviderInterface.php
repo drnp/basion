@@ -22,18 +22,34 @@ interface FrameworkProviderInterface
     public function initFramework();
 
     /**
-     * Set structurized context data
-     *
-     * @param mixed     Data
-     *
-     * @return boolean  Result
+     * Start original framework
      */
-    public function setStructurizedData($data);
+    public function startFramework();
 
     /**
-     * Get structurized context data
+     * Get original instance of framework
      *
-     * @return mixed    Data
+     * @return object   Application
      */
-    public function getStructurizedData();
+    public function getApp();
+
+    /**
+     * Set <before> middleware
+     */
+    public function setBeforeMiddleWare(callable $f);
+
+    /**
+     * Set <after> middleware
+     */
+    public function setAfterMiddleWare(callable $f);
+
+    /**
+     * Set <abort> middleware
+     */
+    public function setAbortMiddleWare(callable $f);
+
+    /**
+     * Set <finish> middleware
+     */
+    public function setFinishMiddleWare(callable $f);
 }
