@@ -11,12 +11,12 @@ namespace Basion\MiddleWares;
 use Basion\Interfaces\MiddleWareInterface;
 
 /**
- * Restful API version via user-definded header
+ * Authorization token via HTTP header
  *
  * @package basion
- * @since 1.0.0
+ * @since 0.0.1
  */
-class ApiVersion implements MiddleWareInterface
+class Authorization implements MiddleWareInterface
 {
     /**
      * Abstract method: before
@@ -24,16 +24,21 @@ class ApiVersion implements MiddleWareInterface
     public static function before()
     {
         $provider = \func_get_arg(0);
-        $config = $provider['middlewares']['config']['ApiVersion'];
-        $header_item = (isset($config['header'])) ? \trim($config['header']) : 'Api-Version';
-        $key = 'HTTP_' . \str_replace('-', '_', \strtoupper($header_item));
-        $version = \filter_input(\INPUT_SERVER, $key);
-        if (!$version)
+        $config = $provider['middlewares']['config']['Authorization'];
+        $raw = \filter_input(\INPUT_SERVER, 'HTTP_AUTHORIZATION');
+        $scheme = (isset($config['scheme']) && \is_string($config['scheme'])) ? $config['scheme'] : 'basion';
+        $scheme = \strtoupper($scheme);
+        $token = '';
+        if ($raw)
         {
-            $version = (isset($config['default'])) ? $config['default'] : 1;
+            $partten = '|^' . $scheme . '\s+(\w+)|i';
+            if (\preg_match($partten, $raw, $matches) > 0)
+            {
+                $token = $matches[1];
+            }
         }
 
-        $provider['api_version'] = intval($version);
+        $provider['authorization_token'] = $token;
     }
 
     /**

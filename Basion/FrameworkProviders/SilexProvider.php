@@ -93,6 +93,7 @@ class SilexProvider extends ProviderBase implements FrameworkProviderInterface
     {
         $self = &$this;
         $this->app->after(function (Request $request, Response $response) use ($f, $self) {
+            $self['http_status_code'] = $response->getStatusCode();
             \call_user_func($f, $self);
             if ($self['headers'] && \is_array($self['headers']))
             {

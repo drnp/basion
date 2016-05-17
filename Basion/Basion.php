@@ -19,6 +19,8 @@ require 'FrameworkProviders/SilexProvider.php';
 require 'Interfaces/MiddleWareInterface.php';
 require 'MiddleWares/ContentType.php';
 require 'MiddleWares/ApiVersion.php';
+require 'MiddleWares/DataEnvelope.php';
+require 'MiddleWares/Authorization.php';
 /**
  *** Require ***
  */
@@ -57,10 +59,10 @@ class Basion
      * @var array
      */
     private $supported_middlewares = [
-        'ApiVersion'    => '',
-        'Authorization' => '', 
-        'ContentType'   => '', 
-        'DataEnvelope'  => ''
+        'ApiVersion'    => 0,
+        'Authorization' => 10, 
+        'ContentType'   => 100, 
+        'DataEnvelope'  => 80
     ];
 
     /**
@@ -163,6 +165,9 @@ class Basion
         // HTTP request method
         $provider['http_request_method'] = \strtolower(\filter_input(\INPUT_SERVER, 'REQUEST_METHOD'));
 
+        // HTTP status
+        $provider['http_status_code'] = 200;
+
         return $provider;
     }
 
@@ -218,8 +223,43 @@ class Basion
      */
     public function output($data = null)
     {
-        //$this->provider->setStructurizedData($data);
         $this->provider['structurized_data'] = $data;
+    }
+
+    /**
+     * Set HTTP status code
+     *
+     * @param int       Code
+     */
+    public function httpStatus($code = 200)
+    {
+        $this->provider['http_status_code'] = \intval($code);
+    }
+
+    /**
+     * Set route name
+     *
+     * @param string    Name
+     */
+    public function setName($name)
+    {
+        return;
+    }
+
+    /**
+     * Generate HTTP SDK
+     */
+    public function generateSdk()
+    {
+        return;
+    }
+
+    /**
+     * Generate API document
+     */
+    public function generateDoc()
+    {
+        return;
     }
 
     /**
@@ -230,6 +270,13 @@ class Basion
     private function _setMiddleWares()
     {
         $configs = [];
+        $sm = $this->supported_middlewares;
+        \uksort($this->middlewares, function ($key1, $key2) use ($sm) {
+            $v1 = $sm[$key1];
+            $v2 = $sm[$key2];
+
+            return ($v1 > $v2) ? 1 : (($v1 == $v2) ? 0 : -1);
+        });
         try
         {
             foreach ($this->middlewares as $middleware => $config)
@@ -248,5 +295,19 @@ class Basion
         }
 
         $this->provider['middlewares'] = ['config' => $configs];
+    }
+
+    /**
+     * Magic method for framework penetrate
+     */
+    public function __call($method, $arguments)
+    {
+        // Try call method to framework instance
+        if (\method_exists($this->app, $method))
+        {
+            \call_user_func_array([$this->app, $method], $arguments);
+        }
+
+        return $this;
     }
 }
